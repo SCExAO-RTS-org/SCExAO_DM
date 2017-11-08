@@ -197,7 +197,7 @@ int init_SCExAO_DM()
 
 
   // add atexit functions here
-  atexit((void*) SCEXAO_DM_unloadconf);
+
   
   return 0;
 }
