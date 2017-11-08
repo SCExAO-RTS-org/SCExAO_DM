@@ -126,6 +126,11 @@ int SCExAO_DM_dmturb_tint_cli()
 
 
 
+void __attribute__ ((constructor)) libinit_SCExAO_DM()
+{
+	init_SCExAO_DM();
+	printf(" ...... Loading module %s\n", __FILE__);
+}
 
 int init_SCExAO_DM()
 {
@@ -424,9 +429,9 @@ int SCExAO_DM_CombineChannels(int mode)
     #ifndef __MACH__
     int r;
     
-    r = seteuid(euid_called); //This goes up to maximum privileges
+    r = seteuid(data.euid); //This goes up to maximum privileges
     sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-    r = seteuid(euid_real);//Go back to normal privileges
+    r = seteuid(data.ruid);//Go back to normal privileges
 	#endif
 
     size = (long*) malloc(sizeof(long)*naxis);
