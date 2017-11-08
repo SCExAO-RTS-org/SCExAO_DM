@@ -81,17 +81,8 @@ long IDturb;
 //
 
 
-int SCExAO_DM_CombineChannels_cli()
-{
-  if(CLI_checkarg(1,2)==0)
-    SCExAO_DM_CombineChannels(data.cmdargtoken[1].val.numl);
-  else
-    SCExAO_DM_CombineChannels(1);
-    
-    return 1;
-}
 
-int SCExAO_DM_dmturb_wspeed_cli()
+int_fast8_t SCExAO_DM_dmturb_wspeed_cli()
 {
   if(CLI_checkarg(1,1)==0)
     SCExAO_DM_dmturb_wspeed(data.cmdargtoken[1].val.numf);
@@ -99,7 +90,8 @@ int SCExAO_DM_dmturb_wspeed_cli()
     return 1;
 }
 
-int SCExAO_DM_dmturb_ampl_cli()
+
+int_fast8_t SCExAO_DM_dmturb_ampl_cli()
 {
   if(CLI_checkarg(1,1)==0)
     SCExAO_DM_dmturb_ampl(data.cmdargtoken[1].val.numf);
@@ -107,7 +99,8 @@ int SCExAO_DM_dmturb_ampl_cli()
     return 1;
 }
 
-int SCExAO_DM_dmturb_LOcoeff_cli()
+
+int_fast8_t SCExAO_DM_dmturb_LOcoeff_cli()
 {
   if(CLI_checkarg(1,1)==0)
     SCExAO_DM_dmturb_LOcoeff(data.cmdargtoken[1].val.numf);
@@ -115,7 +108,8 @@ int SCExAO_DM_dmturb_LOcoeff_cli()
     return 1;
 }
 
-int SCExAO_DM_dmturb_tint_cli()
+
+int_fast8_t SCExAO_DM_dmturb_tint_cli()
 {
   if(CLI_checkarg(1,2)==0)
     SCExAO_DM_dmturb_tint(data.cmdargtoken[1].val.numl);
@@ -132,6 +126,8 @@ void __attribute__ ((constructor)) libinit_SCExAO_DM()
 	printf(" ...... Loading module %s\n", __FILE__);
 }
 
+
+
 int init_SCExAO_DM()
 {
   strcpy(data.module[data.NBmodule].name, __FILE__);
@@ -139,41 +135,6 @@ int init_SCExAO_DM()
   data.NBmodule++;
 
 
-  strcpy(data.cmd[data.NBcmd].key,"scexaoDMcomb");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp = SCExAO_DM_CombineChannels_cli;
-  strcpy(data.cmd[data.NBcmd].info,"combine channels");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaoDMcomb");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_CombineChannels(int mode)");
-  data.NBcmd++;
-
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmcomboff");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmdispcomboff;
-  strcpy(data.cmd[data.NBcmd].info,"turn off DM combine");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmcomboff");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmdispcomboff()");
-  data.NBcmd++;
-
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmcombmon");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmdispcombstatus;
-  strcpy(data.cmd[data.NBcmd].info,"monitor DM comb program");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmcombmon");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmdispcombstatus()");
-  data.NBcmd++;
-
-  strcpy(data.cmd[data.NBcmd].key,"scexaodmtrigoff");
-  strcpy(data.cmd[data.NBcmd].module,__FILE__);
-  data.cmd[data.NBcmd].fp =  SCExAO_DM_dmtrigoff;
-  strcpy(data.cmd[data.NBcmd].info,"turn off DM trigger");
-  strcpy(data.cmd[data.NBcmd].syntax,"no arg");
-  strcpy(data.cmd[data.NBcmd].example,"scexaodmtrigoff");
-  strcpy(data.cmd[data.NBcmd].Ccall,"int SCExAO_DM_dmtrigoff()");
-  data.NBcmd++;
 
 
 
@@ -266,36 +227,9 @@ struct timespec time_diff(struct timespec start, struct timespec end)
 
 
 
-int SCExAO_DM_disp2V(long IDdisp, long IDvolt)
-{
-    long ii;
 
 
-
-    data.image[IDvolt].md[0].write = 1;
-    for(ii=0; ii<NBact; ii++)
-    {
-		float volt;
-		
-        volt = 100.0*sqrt(data.image[IDdisp].array.F[ii]/DMSTROKE100);
-        if(volt>dispcombconf[0].MAXVOLT)
-            volt = dispcombconf[0].MAXVOLT;
-        data.image[IDvolt].array.U[ii] = (unsigned short int) (volt/300.0*65536.0);
-    }
-
-    data.image[IDvolt].md[0].write = 0;
-    data.image[IDvolt].md[0].cnt0++;
-
-
-
-    return 0;
-}
-
-
-
-
-
-int SCEXAO_DM_createconf()
+int_fast8_t SCEXAO_DM_createconf()
 {
     if( dmdispcomb_loaded == 0 )
     {
@@ -347,325 +281,33 @@ int SCEXAO_DM_createconf()
 
 
 
-int SCEXAO_DM_loadconf()
-{
-    int result;
-
-    if( dmdispcomb_loaded == 0 )
-    {
-        printf("Create/read configuration\n");
-
-        SMfd = open(DISPCOMB_FILENAME_CONF, O_RDWR, (mode_t)0600);
-        if (SMfd == -1) {
-            perror("Error opening file for writing");
-            exit(EXIT_FAILURE);
-        }
-        dispcombconf = (SCEXAO_DISPCOMB_CONF*)mmap(0, sizeof(SCEXAO_DISPCOMB_CONF), PROT_READ | PROT_WRITE, MAP_SHARED, SMfd, 0);
-        if (dispcombconf == MAP_FAILED) {
-            close(SMfd);
-            perror("Error mmapping the file");
-            exit(EXIT_FAILURE);
-        }
-
-        dmdispcomb_loaded = 1;
-    }
-
-    return 0;
-}
-
-
-
-
-int SCEXAO_DM_unloadconf()
-{
-    if( dmdispcomb_loaded == 1 )
-    {
-        if (munmap(dispcombconf, sizeof(SCEXAO_DISPCOMB_CONF)) == -1)
-            perror("Error un-mmapping the file");
-        close(SMfd);
-        dmdispcomb_loaded = 0;
-    }
-    return 0;
-}
-
-
-
-
-
-
-
-//
-// mode = 1 if DM volt computed
-//
-// NOTE: responds immediately to sem1 in dmdisp
-//
-int SCExAO_DM_CombineChannels(int mode)
-{
-    long naxis = 2;
-    long xsize = 50;
-    long ysize = 50;
-    long *size;
-    long ch;
-    char name[200];
-    long *IDch;
-    long NBch = 8;
-    long long cntsumold;
-    long ii;
-    long IDdisp;
-    long IDvolt;
-    double ave;
-    long ID1;
-    int RT_priority = 95; //any number from 0-99
-    struct sched_param schedpar;
-    long sizexy;
-    float *dmdispptr;
-    float *dmdispptr_array[20];
-    long IDdispt;
-
-    long nsecwait = 100000; // 100 us
-
-    schedpar.sched_priority = RT_priority;
-
-    #ifndef __MACH__
-    int r;
-    
-    r = seteuid(data.euid); //This goes up to maximum privileges
-    sched_setscheduler(0, SCHED_FIFO, &schedpar); //other option is SCHED_RR, might be faster
-    r = seteuid(data.ruid);//Go back to normal privileges
-	#endif
-
-    size = (long*) malloc(sizeof(long)*naxis);
-    IDch = (long*) malloc(sizeof(long)*NBch);
-    size[0] = xsize;
-    size[1] = ysize;
-    sizexy = xsize*ysize;
-
-
-    SCEXAO_DM_createconf();
-    dispcombconf[0].ON = 1;
-    dispcombconf[0].status = 0;
-
-    printf("Initialize channels\n");
-
-    for(ch=0; ch<NBch; ch++)
-    {
-        sprintf(name, "dmdisp%ld", ch);
-        printf("Channel %ld \n", ch);
-        IDch[ch] = create_image_ID(name, naxis, size, FLOAT, 1, 10);
-        dmdispptr_array[ch] = data.image[IDch[ch]].array.F;
-    }
 
 
-    IDdisp = create_image_ID("dmdisp", naxis, size, FLOAT, 1, 10);
 
-    IDdispt = create_image_ID("dmdispt", naxis, size, FLOAT, 0, 0);
-    dmdispptr = data.image[IDdispt].array.F;
 
-    if(mode==1)
-        IDvolt = create_image_ID("dmvolt", naxis, size, USHORT, 1, 10);
 
-    cntsumold = 0;
 
-    dispcombconf[0].status = 1;
 
-    if(data.image[IDdisp].sem1==0)
-    {
-		char sname[200];
-		
-        sprintf(sname, "%s_sem1", data.image[IDdisp].name);
-        if ((data.image[IDdisp].semptr1 = sem_open(sname, O_CREAT, 0644, 1)) == SEM_FAILED) {
-            perror("semaphore 1 initilization error");
-            exit(1);
-        }
-        else
-            printf("semaphore 1 initialized for image dmdisp \n");
-        data.image[IDdisp].sem1 = 1;
-    }
 
-    while(dispcombconf[0].ON == 1)
-    {
-	    long long cntsum;
-	
-		
-        dispcombconf[0].status = 2;
 
 
 
-        if (clock_gettime(CLOCK_REALTIME, &semwaitts) == -1) {
-            perror("clock_gettime");
-            exit(EXIT_FAILURE);
-        }
-        semwaitts.tv_nsec += nsecwait;
-        if(semwaitts.tv_nsec >= 1000000000)
-            semwaitts.tv_sec = semwaitts.tv_sec + 1;
 
-        sem_timedwait(data.image[IDdisp].semptr1, &semwaitts);
-        // usleep(10);
 
-        cntsum = 0;
 
 
 
-        for(ch=0; ch<NBch; ch++)
-            cntsum += data.image[IDch[ch]].md[0].cnt0;
 
 
-        if(cntsum != cntsumold) // if total cnt sum has changed, sum up all channels
-        {
-            dispcombconf[0].status = 3;
 
-            memcpy (data.image[IDdispt].array.F, dmdispptr_array[0], sizeof(float)*sizexy);
-            for(ch=1; ch<NBch; ch++)
-            {
-                for(ii=0; ii<sizexy; ii++)
-                    dmdispptr[ii] += dmdispptr_array[ch][ii];
-            }
-            
-            
 
-            dispcombconf[0].status = 4;
 
-            // REMOVE DC LEVEL AND MOVE TO MEAN MOTION RANGE
-            ave = 0.0;
-            for(ii=0; ii<NBact; ii++)
-                ave += data.image[IDdispt].array.F[ii];
-            ave /= NBact;
 
-            dispcombconf[0].status = 5;
 
-            for(ii=0; ii<NBact; ii++)
-            {
-                data.image[IDdispt].array.F[ii] += 0.5*(DMSTROKE100*dispcombconf[0].MAXVOLT/100.0*dispcombconf[0].MAXVOLT/100.0)-ave;
-                if(data.image[IDdispt].array.F[ii]<0.0)
-                    data.image[IDdispt].array.F[ii] = 0.0;
-            }
 
-            dispcombconf[0].status = 6;
 
-            data.image[IDdisp].md[0].write = 1;
-            memcpy (data.image[IDdisp].array.F,data.image[IDdispt].array.F, sizeof(float)*data.image[IDdisp].md[0].nelement);
-            data.image[IDdisp].md[0].cnt0++;
-            data.image[IDdisp].md[0].write = 0;
 
-            dispcombconf[0].status = 7;
-
-            if(mode==1)
-                SCExAO_DM_disp2V(IDdisp, IDvolt);
-
-            dispcombconf[0].status = 8;
-
-            cntsumold = cntsum;
-        }
-    }
-
-    if(mode==1)
-        arith_image_zero("dmvolt");
-
-
-
-    printf("LOOP STOPPED\n");
-    fflush(stdout);
-
-    free(size);
-    free(IDch);
-
-    return 0;
-}
-
-
-
-
-
-
-
-
-int SCExAO_DM_dmdispcombstatus()
-{
-    long long mcnt = 0;
-
-
-    SCEXAO_DM_loadconf();
-
-    initscr();
-    getmaxyx(stdscr, wrow, wcol);
-
-    start_color();
-    init_pair(1, COLOR_BLACK, COLOR_WHITE);
-    init_pair(2, COLOR_BLACK, COLOR_RED);
-    init_pair(3, COLOR_GREEN, COLOR_BLACK);
-    init_pair(4, COLOR_RED, COLOR_BLACK);
-
-    while( !kbdhit() )
-    {
-        usleep(dispcombconf[0].moninterval);
-        clear();
-        attron(A_BOLD);
-        print_header(" PRESS ANY KEY TO STOP MONITOR ", '-');
-        attroff(A_BOLD);
-        printw("    %ld\n", mcnt);
-        printw("ON         %d\n", dispcombconf[0].ON);
-        printw("cnt       %ld\n", dispcombconf[0].loopcnt);
-        printw("updatecnt %ld\n", dispcombconf[0].updatecnt);
-        printw("busy      %d\n", dispcombconf[0].busy);
-        printw("MAXVOLT   %f\n", dispcombconf[0].MAXVOLT);
-        printw("status    %d\n",  dispcombconf[0].status);
-        printw("moninterval %d\n", dispcombconf[0].moninterval);
-        mcnt++;
-        refresh();
-    }
-    endwin();
-
-    return 0;
-}
-
-
-
-
-
-int SCExAO_DM_dmdispcomboff()
-{
-    SCEXAO_DM_loadconf();
-    dispcombconf[0].ON = 0;
-
-    return 0;
-}
-
-int SCExAO_DM_dmtrigoff()
-{
-    long ID;
-
-    ID=image_ID("dmvolt");
-
-    if(ID!=-1)
-        data.image[ID].md[0].status = 101;
-    else
-    {
-        ID = read_sharedmem_image("dmvolt");
-        data.image[ID].md[0].status = 101;
-    }
-
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-int SCEXAO_DMturb_createconf()
+int_fast8_t SCEXAO_DMturb_createconf()
 {
 
   if( dmturb_loaded == 0 ) 
@@ -728,7 +370,7 @@ int SCEXAO_DMturb_createconf()
 
 
 
-int SCEXAO_DMturb_loadconf()
+int_fast8_t SCEXAO_DMturb_loadconf()
 {
   int result;
 
@@ -757,7 +399,7 @@ int SCEXAO_DMturb_loadconf()
 
 
 
-int SCExAO_DM_dmturboff()
+int_fast8_t SCExAO_DM_dmturboff()
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].on = 0;
@@ -766,7 +408,7 @@ int SCExAO_DM_dmturboff()
   return 0;
 }
 
-int SCExAO_DM_dmturb_wspeed(double wspeed)
+int_fast8_t SCExAO_DM_dmturb_wspeed(double wspeed)
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].wspeed = wspeed;
@@ -775,7 +417,7 @@ int SCExAO_DM_dmturb_wspeed(double wspeed)
   return 0;
 }
 
-int SCExAO_DM_dmturb_ampl(double ampl)
+int_fast8_t SCExAO_DM_dmturb_ampl(double ampl)
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].ampl = ampl;
@@ -784,7 +426,7 @@ int SCExAO_DM_dmturb_ampl(double ampl)
   return 0;
 }
 
-int SCExAO_DM_dmturb_LOcoeff(double LOcoeff)
+int_fast8_t SCExAO_DM_dmturb_LOcoeff(double LOcoeff)
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].LOcoeff = LOcoeff;
@@ -793,7 +435,7 @@ int SCExAO_DM_dmturb_LOcoeff(double LOcoeff)
   return 0;
 }
 
-int SCExAO_DM_dmturb_tint(long tint)
+int_fast8_t SCExAO_DM_dmturb_tint(long tint)
 {
   SCEXAO_DMturb_loadconf();
   dmturbconf[0].tint = tint;
@@ -804,7 +446,7 @@ int SCExAO_DM_dmturb_tint(long tint)
 
 
 
-int SCExAO_DM_dmturb_printstatus()
+int_fast8_t SCExAO_DM_dmturb_printstatus()
 {
   SCEXAO_DMturb_loadconf();
 
@@ -832,7 +474,7 @@ int SCExAO_DM_dmturb_printstatus()
 
 
 
-int SCExAO_DM_turb()
+int_fast8_t SCExAO_DM_turb()
 {
   long size_sx; // screen size
   long size_sy;
@@ -862,11 +504,11 @@ int SCExAO_DM_turb()
 
   SCEXAO_DMturb_createconf();
  
-  IDs1 = load_fits("/home/scexao/src/DMcontrol/dm_turb/turbscreen0.fits", "screen1");
-  IDs2 = load_fits("/home/scexao/src/DMcontrol/dm_turb/turbscreen0g.fits", "screen2"); 
+  IDs1 = load_fits("/home/scexao/src/DMcontrol/dm_turb/turbscreen0.fits", "screen1", 1);
+  IDs2 = load_fits("/home/scexao/src/DMcontrol/dm_turb/turbscreen0g.fits", "screen2", 1); 
   
 
-  printf("ARRAY SIZE = %ld %ld\n", data.image[IDs1].md[0].size[0], data.image[IDs1].md[0].size[1]);
+  printf("ARRAY SIZE = %ld %ld\n", (long) data.image[IDs1].md[0].size[0], (long) data.image[IDs1].md[0].size[1]);
   size_sx = data.image[IDs1].md[0].size[0];
   size_sy = data.image[IDs1].md[0].size[1];
 
@@ -971,7 +613,7 @@ int SCExAO_DM_turb()
       else
 	coeff *= 1.001;
       
-      copy_image_ID("turbs", "dmdisp1");
+      copy_image_ID("turbs", "dmdisp1", 1);
     }
   
 

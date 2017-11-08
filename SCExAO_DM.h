@@ -50,26 +50,22 @@ typedef struct
 
 
 
+int init_SCExAO_DM();
 
-int init_AOsystSim();
-int SCExAO_DM_disp2V(long IDdisp, long IDvolt);
-int SCEXAO_DM_createconf();
-int SCEXAO_DM_loadconf();
-int SCEXAO_DM_unloadconf();
-int SCExAO_DM_CombineChannels(int mode);
-int SCExAO_DM_dmdispcombstatus();
-int SCExAO_DM_dmdispcomboff();
-int SCExAO_DM_dmtrigoff();
+int_fast8_t SCEXAO_DM_createconf();
+int_fast8_t SCEXAO_DM_loadconf();
+int_fast8_t SCEXAO_DM_unloadconf();
 
-int SCEXAO_DMturb_createconf();
-int SCEXAO_DMturb_loadconf();
-int SCExAO_DM_dmturboff();
-int SCExAO_DM_dmturb_wspeed(double wspeed);
-int SCExAO_DM_dmturb_ampl(double ampl);
-int SCExAO_DM_dmturb_LOcoeff(double LOcoeff);
-int SCExAO_DM_dmturb_tint(long tint);
-int SCExAO_DM_dmturb_printstatus();
-int SCExAO_DM_turb();
+
+int_fast8_t SCEXAO_DMturb_createconf();
+int_fast8_t SCEXAO_DMturb_loadconf();
+int_fast8_t SCExAO_DM_dmturboff();
+int_fast8_t SCExAO_DM_dmturb_wspeed(double wspeed);
+int_fast8_t SCExAO_DM_dmturb_ampl(double ampl);
+int_fast8_t SCExAO_DM_dmturb_LOcoeff(double LOcoeff);
+int_fast8_t SCExAO_DM_dmturb_tint(long tint);
+int_fast8_t SCExAO_DM_dmturb_printstatus();
+int_fast8_t SCExAO_DM_turb();
 
 
 #endif
